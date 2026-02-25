@@ -9,24 +9,22 @@ Use this checklist to verify that all systems, Docker configurations, and the AP
   ```bash
   docker-compose up --build -d
   ```
-- [ ] Verify that all 7 containers are running (`mongodb`, `api-gateway`, `frontend`, `event-service`, `ticket-service`, `user-service`, `payment-service`).
+- [ ] Verify that all 6 containers are running (`frontend`, `event-service`, `ticket-service`, `user-service`, `payment-service`).
   ```bash
   docker ps
   ```
 
-## 2. API Gateway & Service Routing Tests
-Test the API Gateway by making requests to `http://localhost:8080`.
+## 2. Service Health Tests
+Test the services directly via their exposed ports.
 
-- [ ] **Gateway Health Check**: 
-  - `GET http://localhost:8080/health` -> Expect `{"status": "API Gateway is running"}`
 - [ ] **Event Service Route**: 
-  - `GET http://localhost:8080/api/events/health` (Assuming service has a health route) -> Should not return 502/404.
+  - `GET http://localhost:4000/api/events/health` (Assuming service has a health route, adjust path as necessary)
 - [ ] **Ticket Service Route**:
-  - `GET http://localhost:8080/api/tickets/health`
+  - `GET http://localhost:5000/api/tickets/health`
 - [ ] **User Service Route**:
-  - `GET http://localhost:8080/api/users/health`
+  - `GET http://localhost:3000/api/users/health`
 - [ ] **Payment Service Route**:
-  - `GET http://localhost:8080/api/payments/health`
+  - `GET http://localhost:6000/api/payments/health`
 
 ## 3. Database Persistence Test
 - [ ] Create an entity (User/Event) using a POST request via the API Gateway.
@@ -42,6 +40,6 @@ Test the API Gateway by making requests to `http://localhost:8080`.
 - [ ] Check `Build & Push to DockerHub` creates new images with the latest commit SHA.
 - [ ] (If Azure is configured) Check `Deploy to Azure Container Apps` successfully updates the revisions.
 
-## 5. Security Check
+## 5. Security & Routing Check
 - [ ] Make a direct request to `http://localhost:4000/api/events`. It should work locally since ports are mapped.
-- [ ] *For Production*: Verify that attempting to access a specific service URL directly (bypassing the API Gateway) fails or is denied.
+- [ ] *For Production*: Assuming you use Azure API Management, verify that attempting to access a specific Container App URL directly bypasses the Azure API Management is denied (by configuring internal ingress for the apps).

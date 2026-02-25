@@ -1,36 +1,6 @@
 version: '3.8'
 
 services:
-  # mongodb:
-  #   image: mongo:latest
-  #   container_name: shared-mongodb
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongodb_data:/data/db
-  #   networks:
-  #     - event-network
-
-  api-gateway:
-    build:
-      context: ./ApiGateway
-      dockerfile: Dockerfile
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    environment:
-      - PORT=8080
-      - EVENT_SERVICE_URL=http://event-service:4000
-      - TICKET_SERVICE_URL=http://ticket-service:5000
-      - USER_SERVICE_URL=http://user-service:3000
-      - PAYMENT_SERVICE_URL=http://payment-service:6000
-    depends_on:
-      - event-service
-      - ticket-service
-      - user-service
-      - payment-service
-    networks:
-      - event-network
 
   event-service:
     build:
@@ -42,8 +12,6 @@ services:
     environment:
       - PORT=4000
       - MONGODB_URI=mongodb+srv://nisal:1234@cluster0.p860x.mongodb.net/eventdb
-    # depends_on:
-    #   - mongodb
     networks:
       - event-network
 
@@ -57,8 +25,6 @@ services:
     environment:
       - PORT=5000
       - MONGODB_URI=mongodb+srv://nisal:1234@cluster0.p860x.mongodb.net/ticketdb
-    # depends_on:
-    #   - mongodb
     networks:
       - event-network
 
@@ -72,8 +38,6 @@ services:
     environment:
       - PORT=3000
       - MONGODB_URI=mongodb+srv://nisal:1234@cluster0.p860x.mongodb.net/userdb
-    # depends_on:
-    #   - mongodb
     networks:
       - event-network
 
@@ -87,8 +51,6 @@ services:
     environment:
       - PORT=6000
       - MONGODB_URI=mongodb+srv://nisal:1234@cluster0.p860x.mongodb.net/paymentdb
-    # depends_on:
-    #   - mongodb
     networks:
       - event-network
 
