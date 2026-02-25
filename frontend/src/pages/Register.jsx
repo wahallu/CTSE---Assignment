@@ -28,7 +28,15 @@ export default function Register() {
         setLoading(true);
         try {
             const res = await registerUser(form);
-            localStorage.setItem("user", JSON.stringify(res.data));
+            // Backend returns { success, data: { id, name, email, role, createdAt }, token }
+            const userData = {
+                _id: res.data.id,
+                name: res.data.name,
+                email: res.data.email,
+                role: res.data.role,
+            };
+            localStorage.setItem("user", JSON.stringify(userData));
+            localStorage.setItem("token", res.token);
             navigate("/events");
         } catch (err) {
             setError(err.message);

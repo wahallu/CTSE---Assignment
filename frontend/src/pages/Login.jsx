@@ -16,7 +16,6 @@ export default function Login() {
         e.preventDefault();
         setError("");
 
-        // Basic validation
         if (!form.email || !form.password) {
             setError("Please fill in all fields");
             return;
@@ -25,8 +24,15 @@ export default function Login() {
         setLoading(true);
         try {
             const res = await loginUser(form);
-            // Store user in localStorage (demo auth — no JWT)
-            localStorage.setItem("user", JSON.stringify(res.data));
+            // Backend returns { success, data: { id, name, email, role }, token }
+            const userData = {
+                _id: res.data.id,
+                name: res.data.name,
+                email: res.data.email,
+                role: res.data.role,
+            };
+            localStorage.setItem("user", JSON.stringify(userData));
+            localStorage.setItem("token", res.token);
             navigate("/events");
         } catch (err) {
             setError(err.message);
