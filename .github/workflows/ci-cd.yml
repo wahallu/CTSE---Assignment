@@ -112,4 +112,4 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name frontend --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}
+            az containerapp update --name event-frontend --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}
