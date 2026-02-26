@@ -32,7 +32,7 @@ app.use(errorHandler);
 
 // Database connection and server start
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(process.env.MONGODB_URI || process.env.MONGO_URI)
     .then(() => {
         console.log("MongoDB connected successfully");
         app.listen(PORT, () => {
