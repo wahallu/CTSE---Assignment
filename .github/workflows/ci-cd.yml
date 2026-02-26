@@ -43,14 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - service: eventservice
-          - service: ticketservice
-          - service: userservice
-          - service: paymentservice
-          - service: apigateway
-          - service: frontend
-            build_args: VITE_API_URL=${{ secrets.API_GATEWAY_URL }}
+        service: [eventservice, ticketservice, userservice, paymentservice, apigateway, frontend]
 
     steps:
       - uses: actions/checkout@v3
@@ -77,7 +70,7 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:latest, ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build_args }}
+          build-args: ${{ matrix.service == 'frontend' && format('VITE_API_URL={0}', secrets.API_GATEWAY_URL) || '' }}
 
   deploy:
     name: Deploy to Azure Container Apps
