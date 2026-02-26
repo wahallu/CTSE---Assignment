@@ -16,7 +16,7 @@ export default function Payment() {
 
     useEffect(() => {
         if (!user) {
-            navigate("/login");
+            navigate("/users/login");
             return;
         }
 

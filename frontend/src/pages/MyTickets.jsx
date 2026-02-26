@@ -12,7 +12,7 @@ export default function MyTickets() {
 
     useEffect(() => {
         if (!user) {
-            navigate("/login");
+            navigate("/users/login");
             return;
         }
 
