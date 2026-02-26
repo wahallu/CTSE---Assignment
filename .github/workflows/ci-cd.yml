@@ -9,10 +9,17 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   RESOURCE_GROUP: event-management-rg
   CONTAINER_APP_ENV: event-management-env
   REGISTRY_NAME: docker.io/${{ secrets.DOCKER_USERNAME }}
@@ -72,12 +79,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Wait for Azure CLI to be available and run a script to update all container apps.
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Event Service
         uses: azure/CLI@v1
