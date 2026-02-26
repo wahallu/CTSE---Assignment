@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [eventservice, ticketservice, userservice, paymentservice, frontend]
+        service: [EventService, TicketService, UserService, PaymentService, frontend]
     
     steps:
       - uses: actions/checkout@v3
