@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Centralized error handling
 app.use(errorHandler);

@@ -1,6 +1,6 @@
 import api from "./api";
 
-const BASE = "/tickets";
+const BASE = "/api/tickets";
 
 /** POST /api/tickets */
 export const createTicket = async (ticketData) => {

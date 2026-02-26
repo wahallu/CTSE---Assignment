@@ -1,6 +1,6 @@
 import api from "./api";
 
-const BASE = "/payments";
+const BASE = "/api/payments";
 
 /**
  * Create / simulate a payment.
