@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Reusable axios instance — reads base URL from environment
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "https://event-api.azure-api.net",
+    baseURL: "https://event-api.azure-api.net",
     headers: {
         "Content-Type": "application/json",
     },
