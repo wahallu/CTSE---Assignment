@@ -7,6 +7,8 @@ import EventDetails from "./pages/EventDetails";
 import Booking from "./pages/Booking";
 import Payment from "./pages/Payment";
 import MyTickets from "./pages/MyTickets";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -22,6 +24,14 @@ function App() {
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/payment/:ticketId" element={<Payment />} />
           <Route path="/my-tickets" element={<MyTickets />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
     </BrowserRouter>

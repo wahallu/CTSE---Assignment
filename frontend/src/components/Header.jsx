@@ -21,6 +21,9 @@ export default function Header() {
                     <Link to="/events">Events</Link>
                     {user ? (
                         <>
+                            {user.role === "admin" && (
+                                <Link to="/admin">Admin</Link>
+                            )}
                             <Link to="/my-tickets">My Tickets</Link>
                             <div className="user-menu">
                                 <span className="user-greeting">Hi, {user.name}</span>
