@@ -86,6 +86,17 @@ jobs:
           tenant-id: ${{ env.AZURE_TENANT_ID }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Get Environment Default Domain
+        id: env-domain
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            DOMAIN=$(az containerapp env show \
+              --name ${{ env.CONTAINER_APP_ENV }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --query properties.defaultDomain -o tsv)
+            echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+
       - name: Deploy User Service
         uses: azure/CLI@v1
         with:
@@ -130,7 +141,7 @@ jobs:
               --image ${{ env.REGISTRY_NAME }}/paymentservice:${{ github.sha }} \
               --set-env-vars \
                 MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/paymentdb \
-                TICKET_SERVICE_URL=https://ticket-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io
+                TICKET_SERVICE_URL=https://ticket-service.internal.${{ steps.env-domain.outputs.domain }}
 
       - name: Deploy API Gateway
         uses: azure/CLI@v1
@@ -142,10 +153,10 @@ jobs:
               --image ${{ env.REGISTRY_NAME }}/apigateway:${{ github.sha }} \
               --set-env-vars \
                 JWT_SECRET=${{ secrets.JWT_SECRET }} \
-                USER_SERVICE_URL=https://user-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
-                EVENT_SERVICE_URL=https://event-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
-                TICKET_SERVICE_URL=https://ticket-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
-                PAYMENT_SERVICE_URL=https://payment-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io
+                USER_SERVICE_URL=https://user-service.internal.${{ steps.env-domain.outputs.domain }} \
+                EVENT_SERVICE_URL=https://event-service.internal.${{ steps.env-domain.outputs.domain }} \
+                TICKET_SERVICE_URL=https://ticket-service.internal.${{ steps.env-domain.outputs.domain }} \
+                PAYMENT_SERVICE_URL=https://payment-service.internal.${{ steps.env-domain.outputs.domain }}
 
       - name: Deploy Frontend
         uses: azure/CLI@v1
