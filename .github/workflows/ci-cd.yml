@@ -30,8 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      
+          fetch-depth: 0
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -43,8 +43,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [eventservice, ticketservice, userservice, paymentservice, apigateway, frontend]
-    
+        include:
+          - service: eventservice
+          - service: ticketservice
+          - service: userservice
+          - service: paymentservice
+          - service: apigateway
+          - service: frontend
+            build_args: VITE_API_URL=${{ secrets.API_GATEWAY_URL }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -70,12 +77,14 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:latest, ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build_args }}
 
   deploy:
     name: Deploy to Azure Container Apps
     needs: build-and-push
     runs-on: ubuntu-latest
-    
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     steps:
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -84,38 +93,72 @@ jobs:
           tenant-id: ${{ env.AZURE_TENANT_ID }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Deploy User Service
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name user-service \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/userservice:${{ github.sha }} \
+              --set-env-vars \
+                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/userdb \
+                JWT_SECRET=${{ secrets.JWT_SECRET }}
+
       - name: Deploy Event Service
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name event-service --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/eventservice:${{ github.sha }}
+            az containerapp update \
+              --name event-service \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/eventservice:${{ github.sha }} \
+              --set-env-vars \
+                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/eventdb
 
       - name: Deploy Ticket Service
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name ticket-service --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/ticketservice:${{ github.sha }}
-
-      - name: Deploy User Service
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az containerapp update --name user-service --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/userservice:${{ github.sha }}
+            az containerapp update \
+              --name ticket-service \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/ticketservice:${{ github.sha }} \
+              --set-env-vars \
+                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/ticketdb
 
       - name: Deploy Payment Service
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name payment-service --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/paymentservice:${{ github.sha }}
+            az containerapp update \
+              --name payment-service \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/paymentservice:${{ github.sha }} \
+              --set-env-vars \
+                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/paymentdb \
+                TICKET_SERVICE_URL=https://ticket-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io
 
       - name: Deploy API Gateway
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name api-gateway --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/apigateway:${{ github.sha }}
+            az containerapp update \
+              --name api-gateway \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/apigateway:${{ github.sha }} \
+              --set-env-vars \
+                JWT_SECRET=${{ secrets.JWT_SECRET }} \
+                USER_SERVICE_URL=https://user-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
+                EVENT_SERVICE_URL=https://event-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
+                TICKET_SERVICE_URL=https://ticket-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io \
+                PAYMENT_SERVICE_URL=https://payment-service.internal.${{ env.CONTAINER_APP_ENV }}.azurecontainerapps.io
 
       - name: Deploy Frontend
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name event-frontend --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}
+            az containerapp update \
+              --name event-frontend \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}
