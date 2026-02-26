@@ -42,7 +42,7 @@ export default function Payment() {
                 ticketId: ticket._id,
                 userId: user._id,
                 amount: ticket.price,
-                method: "card",
+                paymentMethod: "card",
             });
 
             // Update ticket status to "booked"

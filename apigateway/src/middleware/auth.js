@@ -18,7 +18,7 @@ const authenticate = (req, res, next) => {
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(
             token,
-            process.env.JWT_SECRET || "default_jwt_secret"
+            process.env.JWT_SECRET || "eventhub"
         );
 
         req.user = decoded;
