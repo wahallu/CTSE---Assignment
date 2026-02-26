@@ -4,7 +4,7 @@ services:
 
   event-service:
     build:
-      context: ./EventService
+      context: ./eventservice
       dockerfile: Dockerfile
     container_name: event-service
     ports:
@@ -17,7 +17,7 @@ services:
 
   ticket-service:
     build:
-      context: ./TicketService
+      context: ./ticketservice
       dockerfile: Dockerfile
     container_name: ticket-service
     ports:
@@ -30,7 +30,7 @@ services:
 
   user-service:
     build:
-      context: ./UserService
+      context: ./userservice
       dockerfile: Dockerfile
     container_name: user-service
     ports:
@@ -43,7 +43,7 @@ services:
 
   payment-service:
     build:
-      context: ./PaymentService
+      context: ./paymentservice
       dockerfile: Dockerfile
     container_name: payment-service
     ports:
