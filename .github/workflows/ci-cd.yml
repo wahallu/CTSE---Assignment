@@ -16,7 +16,6 @@ permissions:
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -36,7 +35,6 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-and-push:
@@ -45,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [EventService, TicketService, UserService, PaymentService, frontend]
+        service: [eventservice, ticketservice, userservice, paymentservice, frontend]
     
     steps:
       - uses: actions/checkout@v3
@@ -114,4 +112,4 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az containerapp update --name frontend --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}
+            az containerapp update --name event-frontend --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/frontend:${{ github.sha }}

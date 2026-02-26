@@ -1,6 +1,6 @@
 import api from "./api";
 
-const BASE = "/api/events";
+const BASE = "/events";
 
 /** GET /api/events */
 export const getAllEvents = async () => {

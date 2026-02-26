@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm install --omit=dev
+RUN npm install
 
 # Copy application source
 COPY . .
 
 # Expose the application port
-EXPOSE 6000
+EXPOSE 5000
 
 # Start the application
 CMD ["node", "src/app.js"]

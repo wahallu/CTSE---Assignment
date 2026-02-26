@@ -1,6 +1,6 @@
 import api from "./api";
 
-const BASE = "/api/users";
+const BASE = "/users";
 
 /**
  * Register a new user.

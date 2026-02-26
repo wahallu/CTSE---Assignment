@@ -3,40 +3,41 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
-const userRoutes = require("./routes/userRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6000;
 
-// Middleware
+// --------------- Middleware ---------------
 app.use(cors());
 app.use(express.json());
 
-// Health check
+// --------------- Health Check ---------------
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
-        message: "User Service is running",
+        service: "Payment Service",
+        status: "running",
     });
 });
 
-// Routes
-app.use("/api/users", userRoutes);
+// --------------- Routes ---------------
+app.use("/api/payments", paymentRoutes);
 
-// Centralized error handling
+// --------------- Centralized Error Handler ---------------
 app.use(errorHandler);
 
-// Database connection and server start
+// --------------- Database Connection & Server Start ---------------
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(process.env.MONGODB_URI || process.env.MONGO_URI)
     .then(() => {
         console.log("MongoDB connected successfully");
         app.listen(PORT, () => {
-            console.log(`User Service running on port ${PORT}`);
+            console.log(`🚀 Payment Service running on port ${PORT}`);
         });
     })
     .catch((err) => {
