@@ -49,42 +49,34 @@ const conditionalAuth = (req, res, next) => {
     return authenticate(req, res, next);
 };
 
-// ─── Proxy Options Factory ──────────────────────────────────────
-const proxyOptions = (target) => ({
-    target,
-    changeOrigin: true,
-    onError: (err, req, res) => {
-        console.error(`Proxy error: ${err.message}`);
-        res.status(502).json({
-            success: false,
-            message: "Service unavailable",
-        });
-    },
-});
+// ─── Proxy Factory ──────────────────────────────────────────────
+const createServiceProxy = (pathPrefix, target) =>
+    createProxyMiddleware({
+        target,
+        changeOrigin: true,
+        pathFilter: pathPrefix,
+        on: {
+            error: (err, req, res) => {
+                console.error(`Proxy error [${pathPrefix}]: ${err.message}`);
+                res.status(502).json({
+                    success: false,
+                    message: "Service unavailable",
+                });
+            },
+        },
+    });
 
 // ─── Route Proxies ──────────────────────────────────────────────
-app.use(
-    "/api/users",
-    conditionalAuth,
-    createProxyMiddleware(proxyOptions(USER_SERVICE_URL))
-);
+// Auth middleware for protected routes
+app.use("/api/users", conditionalAuth);
+app.use("/api/tickets", authenticate);
+app.use("/api/payments", authenticate);
 
-app.use(
-    "/api/events",
-    createProxyMiddleware(proxyOptions(EVENT_SERVICE_URL))
-);
-
-app.use(
-    "/api/tickets",
-    authenticate,
-    createProxyMiddleware(proxyOptions(TICKET_SERVICE_URL))
-);
-
-app.use(
-    "/api/payments",
-    authenticate,
-    createProxyMiddleware(proxyOptions(PAYMENT_SERVICE_URL))
-);
+// Proxies (mounted at root so full path is preserved)
+app.use(createServiceProxy("/api/users", USER_SERVICE_URL));
+app.use(createServiceProxy("/api/events", EVENT_SERVICE_URL));
+app.use(createServiceProxy("/api/tickets", TICKET_SERVICE_URL));
+app.use(createServiceProxy("/api/payments", PAYMENT_SERVICE_URL));
 
 // ─── Centralized Error Handling ─────────────────────────────────
 app.use(errorHandler);
