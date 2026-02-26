@@ -7,7 +7,7 @@ export default function Header() {
     const handleLogout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/users/login");
     };
 
     return (
@@ -31,8 +31,8 @@ export default function Header() {
                         </>
                     ) : (
                         <>
-                            <Link to="/login">Login</Link>
-                            <Link to="/register" className="btn btn-primary btn-sm">
+                            <Link to="/users/login">Login</Link>
+                            <Link to="/users/register" className="btn btn-primary btn-sm">
                                 Sign Up
                             </Link>
                         </>
