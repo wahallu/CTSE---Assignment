@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [eventservice, ticketservice, userservice, paymentservice, frontend]
+        service: [eventservice, ticketservice, userservice, paymentservice, apigateway, frontend]
     
     steps:
       - uses: actions/checkout@v3
@@ -107,6 +107,12 @@ jobs:
         with:
           inlineScript: |
             az containerapp update --name payment-service --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/paymentservice:${{ github.sha }}
+
+      - name: Deploy API Gateway
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp update --name api-gateway --resource-group ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}/apigateway:${{ github.sha }}
 
       - name: Deploy Frontend
         uses: azure/CLI@v1

@@ -54,6 +54,28 @@ services:
     networks:
       - event-network
 
+  api-gateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "7000:7000"
+    environment:
+      - PORT=7000
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret}
+      - USER_SERVICE_URL=http://user-service:3000
+      - EVENT_SERVICE_URL=http://event-service:4000
+      - TICKET_SERVICE_URL=http://ticket-service:5000
+      - PAYMENT_SERVICE_URL=http://payment-service:6000
+    depends_on:
+      - event-service
+      - ticket-service
+      - user-service
+      - payment-service
+    networks:
+      - event-network
+
   frontend:
     build:
       context: ./frontend
@@ -61,6 +83,8 @@ services:
     container_name: frontend
     ports:
       - "80:80"
+    depends_on:
+      - api-gateway
     networks:
       - event-network
 
