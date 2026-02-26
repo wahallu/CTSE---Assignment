@@ -12,6 +12,9 @@ const errorHandler = require("./middleware/errorHandler");
 const app = express();
 const PORT = process.env.PORT || 7000;
 
+// Trust proxy — required when running behind a reverse proxy (Azure Container Apps, etc.)
+app.set("trust proxy", 1);
+
 // ─── Service URLs ───────────────────────────────────────────────
 const USER_SERVICE_URL =
     process.env.USER_SERVICE_URL || "http://localhost:3000";
