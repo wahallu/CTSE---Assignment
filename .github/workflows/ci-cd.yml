@@ -61,14 +61,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY_NAME }}/${{ matrix.service }}
+          images: ${{ env.REGISTRY_NAME }}/${{ toLower(matrix.service) }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./${{ matrix.service }}
           push: true
-          tags: ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:latest, ${{ env.REGISTRY_NAME }}/${{ matrix.service }}:${{ github.sha }}
+          tags: ${{ env.REGISTRY_NAME }}/${{ toLower(matrix.service) }}:latest, ${{ env.REGISTRY_NAME }}/${{ toLower(matrix.service) }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
