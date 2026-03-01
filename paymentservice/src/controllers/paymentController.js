@@ -2,7 +2,7 @@ const axios = require("axios");
 const Payment = require("../models/Payment");
 
 const TICKET_SERVICE_URL =
-    process.env.TICKET_SERVICE_URL || "http://localhost:5000";
+    process.env.TICKET_SERVICE_URL || "http://127.0.0.1:5000";
 
 // --------------- Helpers ---------------
 

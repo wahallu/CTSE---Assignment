@@ -17,13 +17,13 @@ app.set("trust proxy", 1);
 
 // ─── Service URLs ───────────────────────────────────────────────
 const USER_SERVICE_URL =
-    process.env.USER_SERVICE_URL || "http://localhost:3000";
+    process.env.USER_SERVICE_URL || "http://127.0.0.1:3000";
 const EVENT_SERVICE_URL =
-    process.env.EVENT_SERVICE_URL || "http://localhost:4000";
+    process.env.EVENT_SERVICE_URL || "http://127.0.0.1:4000";
 const TICKET_SERVICE_URL =
-    process.env.TICKET_SERVICE_URL || "http://localhost:5000";
+    process.env.TICKET_SERVICE_URL || "http://127.0.0.1:5000";
 const PAYMENT_SERVICE_URL =
-    process.env.PAYMENT_SERVICE_URL || "http://localhost:6000";
+    process.env.PAYMENT_SERVICE_URL || "http://127.0.0.1:6000";
 
 // ─── Global Middleware ──────────────────────────────────────────
 app.use(cors());
