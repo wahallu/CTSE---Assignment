@@ -129,7 +129,8 @@ jobs:
               --resource-group ${{ env.RESOURCE_GROUP }} \
               --image ${{ env.REGISTRY_NAME }}/ticketservice:${{ github.sha }} \
               --set-env-vars \
-                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/ticketdb
+                MONGODB_URI=${{ secrets.MONGODB_URI_BASE }}/ticketdb \
+                EVENT_SERVICE_URL=https://event-service.internal.${{ steps.env-domain.outputs.domain }}
 
       - name: Deploy Payment Service
         uses: azure/CLI@v1
