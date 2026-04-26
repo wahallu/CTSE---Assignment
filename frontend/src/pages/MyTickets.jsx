@@ -64,7 +64,7 @@ export default function MyTickets() {
         <div className="page">
             <div className="page-header">
                 <div>
-                    <h1>My Tickets</h1>
+                    <h1>My Tickets Here</h1>
                     <p className="page-subtitle">Manage your event bookings</p>
                 </div>
             </div>

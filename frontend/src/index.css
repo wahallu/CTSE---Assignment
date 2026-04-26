@@ -705,7 +705,7 @@ a:hover {
 }
 
 .btn-primary {
-  background: #dc2626;
+  background: var(--color-primary);
   color: #fff;
 }
 
