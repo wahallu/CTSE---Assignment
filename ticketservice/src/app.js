@@ -35,5 +35,3 @@ connectDB().then(() => {
         console.log(`🚀 Ticket Service running on port ${PORT}`);
     });
 });
-
-// test commit
